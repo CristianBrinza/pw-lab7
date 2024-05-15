@@ -57,7 +57,6 @@ const TaskPage: React.FC = () => {
         }
     };
 
-
     const handleEdit = (task: Task) => {
         setEditingTask(task);
         setTitle(task.title);

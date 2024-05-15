@@ -1,40 +1,56 @@
 import axios from 'axios';
+import AuthContext from '../context/AuthContext';
 
+// Base URL for the API
 const API_URL = 'http://localhost:5001/api';
 
+// Create an Axios instance
+const api = axios.create({
+    baseURL: API_URL,
+});
+
+// Add a request interceptor to include the token in all requests
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// API function to get tasks
 export const getTasks = (page: number, limit: number) => {
-    const token = localStorage.getItem('token');
-    return axios.get(`${API_URL}/tasks`, {
+    return api.get('/tasks', {
         params: { page, limit },
-        headers: { 'x-auth-token': token },
     });
 };
 
+// API function to create a task
 export const createTask = (task: { title: string; description: string }) => {
-    const token = localStorage.getItem('token');
-    return axios.post(`${API_URL}/tasks`, task, {
-        headers: { 'x-auth-token': token },
-    });
+    return api.post('/tasks', task);
 };
 
+// API function to update a task
 export const updateTask = (id: string, task: { title: string; description: string }) => {
-    const token = localStorage.getItem('token');
-    return axios.put(`${API_URL}/tasks/${id}`, task, {
-        headers: { 'x-auth-token': token },
-    });
+    return api.put(`/tasks/${id}`, task);
 };
 
+// API function to delete a task
 export const deleteTask = (id: string) => {
-    const token = localStorage.getItem('token');
-    return axios.delete(`${API_URL}/tasks/${id}`, {
-        headers: { 'x-auth-token': token },
-    });
+    return api.delete(`/tasks/${id}`);
 };
 
+// API function to login a user
 export const loginUser = (credentials: { username: string; password: string }) => {
-    return axios.post(`${API_URL}/auth/login`, credentials);
+    return api.post('/auth/login', credentials);
 };
 
-export const registerUser = (data: { username: string; password: string; role: string }) => {
-    return axios.post(`${API_URL}/auth/register`, data);
+// API function to register a user
+export const registerUser = (user: { username: string; password: string; role: string }) => {
+    return api.post('/auth/register', user);
 };
