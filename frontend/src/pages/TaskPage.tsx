@@ -7,7 +7,7 @@ import { useNotification } from '../components/Notification';
 import { Task } from '../types/Task';
 
 const TaskPage: React.FC = () => {
-    const { token, logout, userInfo } = useContext(AuthContext);
+    const { token, logout, userRole, userInfo } = useContext(AuthContext);
     const { showNotification } = useNotification();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [title, setTitle] = useState('');
@@ -72,38 +72,46 @@ const TaskPage: React.FC = () => {
                 </Button>
             </Box>
             <Typography variant="subtitle1">Welcome, {userInfo?.username}</Typography>
-            <Paper elevation={3} sx={{ padding: 3, marginTop: 2 }}>
-                <form onSubmit={handleCreate}>
-                    <TextField
-                        fullWidth
-                        label="Title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        margin="normal"
-                        required
-                    />
-                    <TextField
-                        fullWidth
-                        label="Description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        margin="normal"
-                    />
-                    <Button type="submit" fullWidth variant="contained" color="primary">
-                        {editingTask ? 'Update Task' : 'Create Task'}
-                    </Button>
-                </form>
-            </Paper>
+            {userRole && ['ADMIN', 'WRITER'].includes(userRole) && (
+                <Paper elevation={3} sx={{ padding: 3, marginTop: 2 }}>
+                    <form onSubmit={handleCreate}>
+                        <TextField
+                            fullWidth
+                            label="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            margin="normal"
+                        />
+                        <Button type="submit" fullWidth variant="contained" color="primary">
+                            {editingTask ? 'Update Task' : 'Create Task'}
+                        </Button>
+                    </form>
+                </Paper>
+            )}
             <List>
                 {tasks.map((task: Task) => (
                     <ListItem key={task._id} secondaryAction={
                         <>
-                            <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(task)}>
-                                <Edit />
-                            </IconButton>
-                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(task._id)}>
-                                <Delete />
-                            </IconButton>
+                            {userRole && ['ADMIN', 'WRITER'].includes(userRole) && (
+                                <>
+                                    <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(task)}>
+                                        <Edit />
+                                    </IconButton>
+                                    {userRole === 'ADMIN' && (
+                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(task._id)}>
+                                            <Delete />
+                                        </IconButton>
+                                    )}
+                                </>
+                            )}
                         </>
                     }>
                         <ListItemText primary={task.title} secondary={task.description} />

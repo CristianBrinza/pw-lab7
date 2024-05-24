@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/jwt');
 
-const auth = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-
+module.exports = (req, res, next) => {
+    const token = req.header('Authorization').replace('Bearer ', '');
     if (!token) {
         return res.status(401).json({ message: 'No token, authorization denied' });
     }
@@ -16,5 +15,3 @@ const auth = (req, res, next) => {
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
-
-module.exports = auth;

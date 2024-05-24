@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createTask, getTasks, updateTask, deleteTask } = require('../controllers/taskController');
 const auth = require('../middlewares/auth');
+const role = require('../middlewares/role');
 
 /**
  * @swagger
@@ -28,7 +29,7 @@ const auth = require('../middlewares/auth');
  *       500:
  *         description: Internal server error
  */
-router.post('/', auth, createTask);
+router.post('/', auth, role(['ADMIN', 'WRITER']), createTask);
 
 /**
  * @swagger
@@ -55,7 +56,7 @@ router.post('/', auth, createTask);
  *       500:
  *         description: Internal server error
  */
-router.get('/', auth, getTasks);
+router.get('/', auth, role(['ADMIN', 'WRITER', 'VISITOR']), getTasks);
 
 /**
  * @swagger
@@ -89,7 +90,7 @@ router.get('/', auth, getTasks);
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', auth, updateTask);
+router.put('/:id', auth, role(['ADMIN', 'WRITER']), updateTask);
 
 /**
  * @swagger
@@ -112,6 +113,6 @@ router.put('/:id', auth, updateTask);
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', auth, deleteTask);
+router.delete('/:id', auth, role(['ADMIN']), deleteTask);
 
 module.exports = router;
