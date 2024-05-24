@@ -101,16 +101,14 @@ const TaskPage: React.FC = () => {
                     <ListItem key={task._id} secondaryAction={
                         <>
                             {userRole && ['ADMIN', 'WRITER'].includes(userRole) && (
-                                <>
-                                    <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(task)}>
-                                        <Edit />
-                                    </IconButton>
-                                    {userRole === 'ADMIN' && (
-                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(task._id)}>
-                                            <Delete />
-                                        </IconButton>
-                                    )}
-                                </>
+                                <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(task)}>
+                                    <Edit />
+                                </IconButton>
+                            )}
+                            {userRole === 'ADMIN' && (
+                                <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(task._id)}>
+                                    <Delete />
+                                </IconButton>
                             )}
                         </>
                     }>
